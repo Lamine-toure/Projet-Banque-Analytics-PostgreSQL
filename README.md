@@ -54,32 +54,32 @@ Source : [Kaggle — Transactions Fraud Datasets](https://www.kaggle.com/dataset
 - [Git Bash](https://git-scm.com/) (Windows) ou terminal Linux/Mac
 - Python 3.x + pip (pour le script d'enrichissement)
 
-### 1. Cloner le projet
+### Cloner le projet
 
 ```bash
 git clone https://github.com/votre-username/Projet2_Banque-Analyse.git
 cd Projet2_Banque-Analyse
 ```
 
-### 2. Configurer les variables d'environnement
+### Configurer les variables d'environnement
 
 ```bash
 cp .env.example .env
 # Éditez .env avec vos valeurs
 ```
 
-### 3. Télécharger les données
+### Télécharger les données
 
 Téléchargez les fichiers depuis [Kaggle](https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets) et placez-les dans le dossier `data/`.
 
-### 4. Démarrer les containers
+### Démarrer les containers
 
 ```bash
 docker compose up -d
 docker ps  # Vérifiez que banqueanalytics2 et pgadmin2 tournent
 ```
 
-### 5. Initialiser la base de données
+### Initialiser la base de données
 
 ```bash
 # Création du schéma
@@ -143,99 +143,6 @@ clients (2 000)
 
 Vue : clients_full = clients ⋈ clients_ext
 ```
-
-### Partitionnement
-
-| Table | Type | Partitions |
-|-------|------|------------|
-| `cartes` | LIST (card_brand) | Visa, Mastercard, Amex, Discover, Autres |
-| `transactions` | RANGE (date) | 2010 à 2020 + défaut |
-
-### Index
-
-| Table | Colonnes indexées | Justification |
-|-------|-------------------|---------------|
-| `clients` | `credit_score`, `gender` | Filtres fréquents dans les analyses de risque |
-| `cartes` | `id_client`, `card_type` | Jointures et filtres Debit/Credit |
-| `marchands` | `merchant_city`, `mcc` | Analyses géographiques et par secteur |
-| `transactions` | `id_client`, `date_transaction` | Jointures et filtres temporels |
-
----
-
-## Exercice 1 — Analyses Clients & Transactions
-
-| # | Requête | Technique |
-|---|---------|-----------|
-| Q1 | Clients et nombre de cartes | `LEFT JOIN` + `COUNT` + `GROUP BY` |
-| Q2 | Montant total par client | `SUM` + `ORDER BY` + `LIMIT` |
-| Q3 | Clients à risque (dette) | `CASE WHEN` ratio dette/salaire |
-| Q4 | Transactions par secteur MCC | `LEFT JOIN mcc_codes` + agrégats |
-| Q5 | Cartes les plus utilisées | `GROUP BY card_id` |
-| Q6 | Clients par nationalité | `GROUP BY nationalite` |
-| Q7 | Transactions par type et secteur | Double `GROUP BY` + `ORDER BY` |
-| Q8 | Clients sans transactions | `LEFT JOIN` + `WHERE IS NULL` |
-| Q9 | Top 5 villes actives | `GROUP BY merchant_city` + `LIMIT 5` |
-| Q10 | Analyse par genre | `COUNT DISTINCT` + `SUM` |
-
----
-
-## Exercice 2 — Analyses Avancées
-
-| # | Requête | Technique |
-|---|---------|-----------|
-| Q1 | Évolution dépenses par trimestre | `DATE_TRUNC('quarter')` + `DISTINCT ON` |
-| Q2 | Détection d'anomalies (z-score) | `STDDEV` + z-score `(x-μ)/σ` |
-| Q3 | Analyse RFM | `NTILE(4)` quartiles |
-| Q4 | Clients VIP (top 10%) | `NTILE(10)` + cumul `SUM OVER` |
-| Q5 | Corrélation credit_score | `PERCENTILE_CONT(0.5)` médiane |
-| Q6 | Patterns par secteur et genre | `RANK() OVER (PARTITION BY)` |
-| Q7 | Dépenses croissantes | `LAG()` + fenêtre glissante |
-| Q8 | Diversité des cartes | `COUNT(DISTINCT)` multi-colonnes |
-| Q9 | Prédiction churn | `ROW_NUMBER()` + double CTE |
-
----
-
-## Exercice 3 — Industrialisation (Datamart)
-
-### Tables du datamart
-
-| Table | Source | Fréquence |
-|-------|--------|-----------|
-| `datamart.dm_clients_risque` | Ex1 Q3 | **Quotidien** |
-| `datamart.dm_transactions_secteur` | Ex1 Q4 | **Quotidien** |
-| `datamart.dm_diversite_cartes` | Ex1 Q8 | **Mensuel** |
-| `datamart.dm_rfm` | Ex2 Q3 | **Mensuel** |
-| `datamart.dm_clients_vip` | Ex2 Q4 | **Mensuel** |
-
-### Lancer les batchs manuellement
-
-```bash
-# Batch quotidien
-docker exec -it banqueanalytics2 psql -U lamine -d banqueanalytics2 \
-    -c "CALL datamart.run_daily_batch();"
-
-# Batch mensuel
-docker exec -it banqueanalytics2 psql -U lamine -d banqueanalytics2 \
-    -c "CALL datamart.run_monthly_batch();"
-
-# Consulter l'historique des batchs
-docker exec -it banqueanalytics2 psql -U lamine -d banqueanalytics2 \
-    -c "SELECT batch_name, statut, nb_lignes, date_debut FROM datamart.batch_log ORDER BY date_debut DESC LIMIT 10;"
-```
-
-### Segmentation RFM
-
-| Segment | Condition |
-|---------|-----------|
-| Champion | R=4, F=4, M=4 |
-| Loyal | R≥3, F≥3 |
-| Nouveau | R=4, F≤2 |
-| At Risk | R≤2, F≥3 |
-| Perdu | R=1, F=1 |
-| Standard | Autres |
-
----
-
 ## Sécurité
 
 Les mots de passe et données sensibles sont gérés via un fichier `.env` **jamais versionné**.
