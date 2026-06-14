@@ -1,11 +1,11 @@
-# 🏦 Projet Banque Analytics — PostgreSQL
+# Projet Banque Analytics — PostgreSQL
 
 Projet d'analyse de données bancaires sur PostgreSQL, containerisé avec Docker.
 Il couvre la modélisation d'une base de données, l'analyse SQL avancée et l'industrialisation via PL/pgSQL.
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
 Projet2_Banque-Analyse/
@@ -31,7 +31,7 @@ Projet2_Banque-Analyse/
 
 ---
 
-## 🗃️ Dataset
+## Dataset
 
 Source : [Kaggle — Transactions Fraud Datasets](https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets)
 
@@ -46,7 +46,7 @@ Source : [Kaggle — Transactions Fraud Datasets](https://www.kaggle.com/dataset
 
 ---
 
-## 🚀 Installation et démarrage
+## Installation et démarrage
 
 ### Prérequis
 
@@ -97,7 +97,7 @@ docker exec -i banqueanalytics2 psql -U lamine -d banqueanalytics2 < sql/05_ex3_
 
 ---
 
-## 🔌 Connexion aux outils
+## Connexion aux outils
 
 ### pgAdmin
 ```
@@ -124,7 +124,7 @@ Username : voir .env (POSTGRES_USER)
 
 ---
 
-## 📐 Modèle de données
+## Modèle de données
 
 ```
 clients (2 000)
@@ -162,7 +162,7 @@ Vue : clients_full = clients ⋈ clients_ext
 
 ---
 
-## 📊 Exercice 1 — Analyses Clients & Transactions
+## Exercice 1 — Analyses Clients & Transactions
 
 | # | Requête | Technique |
 |---|---------|-----------|
@@ -179,7 +179,7 @@ Vue : clients_full = clients ⋈ clients_ext
 
 ---
 
-## 🔬 Exercice 2 — Analyses Avancées
+## Exercice 2 — Analyses Avancées
 
 | # | Requête | Technique |
 |---|---------|-----------|
@@ -195,7 +195,7 @@ Vue : clients_full = clients ⋈ clients_ext
 
 ---
 
-## ⚙️ Exercice 3 — Industrialisation (Datamart)
+## Exercice 3 — Industrialisation (Datamart)
 
 ### Tables du datamart
 
@@ -236,7 +236,7 @@ docker exec -it banqueanalytics2 psql -U lamine -d banqueanalytics2 \
 
 ---
 
-## 🔒 Sécurité
+## Sécurité
 
 Les mots de passe et données sensibles sont gérés via un fichier `.env` **jamais versionné**.
 
@@ -252,7 +252,7 @@ DB_PORT=5433
 
 ---
 
-## 🛠️ Technologies
+## Technologies
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
